@@ -43,5 +43,7 @@ def main():
     total_df.to_csv(f'{root}/{project}_total_emb.csv', index=False)
 
 
+if __name__ == '__main__':
+    main()
 
 

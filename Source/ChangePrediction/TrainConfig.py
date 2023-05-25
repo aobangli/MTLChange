@@ -8,67 +8,63 @@ train_device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # 原始数据集路径
 original_path = '../data/Eclipse.csv'
-data_path = '../data/Eclipse.csv'
-# data_path = '../data/Eclipse_emb_total.csv'
-# data_path = '../data/Eclipse_human_reviewer_changes.csv'
+# data_path = '../data/Eclipse.csv'
 # data_path = '../data/Libreoffice.csv'
 # data_path = '../data/OpenStack.csv'
-# data_path = '../data/OpenStack_human_reviewer_changes.csv'
+# data_path = '../data/Libreoffice_new.csv'
+data_path = '../data/Libreoffice_total_emb.csv'
 result_output_path = '../data/output'
 
 # 筛选指定时间的PR
 end_date = "2022-01-01"
 
-# features_group = {
-#     'author': ['author_experience', 'author_merge_ratio', 'author_changes_per_week',
-#                'author_merge_ratio_in_project', 'total_change_num', 'author_review_num'],
-#     'text': ['description_length', 'is_documentation', 'is_bug_fixing', 'is_feature'],
-#     'project': ['project_changes_per_week', 'project_merge_ratio', 'changes_per_author'],
-#     'reviewer': ['num_of_reviewers', 'num_of_bot_reviewers', 'avg_reviewer_experience', 'avg_reviewer_review_count'],
-#     'code': ['lines_added', 'lines_deleted', 'files_added', 'files_deleted', 'files_modified',
-#              'num_of_directory', 'modify_entropy', 'subsystem_num']
-# }
 
 # 将subject、comment、msg转成384维的向量，每个维度为一列
-# subject_emb_features_cols = [f'subject_emb{i + 1}' for i in range(384)]
-# comment_emb_features_cols = [f'comment_emb{i + 1}' for i in range(384)]
-# msg_emb_features_cols = [f'msg_emb{i + 1}' for i in range(384)]
-# emb_features_cols = subject_emb_features_cols + comment_emb_features_cols + msg_emb_features_cols
+subject_emb_features_cols = [f'subject_emb{i + 1}' for i in range(384)]
+comment_emb_features_cols = [f'comment_emb{i + 1}' for i in range(384)]
+msg_emb_features_cols = [f'msg_emb{i + 1}' for i in range(384)]
+emb_features_cols = subject_emb_features_cols + comment_emb_features_cols + msg_emb_features_cols
 
-emb_features_cols = []
+# emb_features_cols = []
 
 features_group = {
-    'author': ['author_experience', 'author_merge_ratio', 'author_changes_per_week',
-               'author_merge_ratio_in_project', 'total_change_num', 'author_review_num',
-               'is_reviewer',
-               'author_subsystem_change_num', 'author_subsystem_change_merge_ratio', 'author_avg_rounds',
-               'author_contribution_rate', 'author_merged_change_num', 'author_abandoned_changes_num',
-               'author_avg_duration'],
-    'text': ['description_length', 'is_documentation', 'is_bug_fixing', 'is_feature', 'is_improve', 'is_refactor'],
-    'meta': [
-             # 'commit_num',
-             'comment_num',
-             'comment_word_num', 'last_comment_mention', 'has_test_file',
-             'description_readability', 'is_responded',
-             # 'first_response_duration'
-            ],
-    'project': ['project_changes_per_week', 'project_merge_ratio', 'changes_per_author',
-                'project_author_num', 'project_duration_per_merged_change', 'project_commits_per_merged_change',
-                'project_comments_per_merged_change', 'project_file_num_per_merged_change',
-                'project_churn_per_merged_change',
-                'project_duration_per_abandoned_change', 'project_commits_per_abandoned_change',
-                'project_comments_per_abandoned_change', 'project_file_num_per_abandoned_change',
-                'project_churn_per_abandoned_change',
-                'project_additions_per_week', 'project_deletions_per_week', 'workload'],
-    'reviewer': ['num_of_reviewers', 'num_of_bot_reviewers', 'avg_reviewer_experience', 'avg_reviewer_review_count',
-                 'review_avg_rounds', 'review_avg_duration'],
-    'code': ['lines_added', 'lines_updated', 'lines_deleted', 'files_added', 'files_deleted', 'files_modified',
-             'num_of_directory', 'modify_entropy', 'subsystem_num',
-             'language_num', 'file_type_num', 'segs_added', 'segs_deleted', 'segs_updated', 'modified_code_ratio',
-             'test_churn', 'src_churn'],
-    'social': ['degree_centrality', 'closeness_centrality', 'betweenness_centrality',
-               'eigenvector_centrality', 'clustering_coefficient', 'k_coreness'],
-    'subject_emb': emb_features_cols
+    'author': ['author_experience', 'author_is_reviewer', 'author_change_num', 'author_participation',
+               'author_changes_per_week', 'author_avg_rounds', 'author_avg_duration', 'author_avg_scores',
+               'author_merge_proportion',
+               'author_degree_centrality', 'author_closeness_centrality', 'author_betweenness_centrality',
+               'author_eigenvector_centrality', 'author_clustering_coefficient', 'author_k_coreness'],
+    'reviewer': ['reviewer_experience',
+                 # 'reviewer_is_author',
+                 'reviewer_change_num', 'reviewer_participation',
+                 'reviewer_avg_comments', 'reviewer_avg_files', 'reviewer_avg_rounds', 'reviewer_avg_duration',
+                 'reviewer_avg_scores', 'reviewer_merge_proportion',
+                 'reviewer_degree_centrality', 'reviewer_closeness_centrality', 'reviewer_betweenness_centrality',
+                 'reviewer_eigenvector_centrality', 'reviewer_clustering_coefficient', 'reviewer_k_coreness'],
+    'change': ['directory_num', 'subsystem_num', 'language_num', 'file_type_num', 'has_test',
+               'has_feature', 'has_bug', 'has_document', 'has_improve', 'has_refactor',
+               'subject_length', 'subject_readability',
+               # 'subject_embedding',
+               'msg_length', 'msg_readability',
+               # 'msg_embedding',
+               'lines_added', 'lines_deleted', 'segs_added', 'segs_deleted', 'segs_updated',
+               'files_added', 'files_deleted', 'files_updated', 'modify_proportion', 'modify_entropy',
+               'test_churn', 'non_test_churn',
+               'reviewer_num', 'bot_reviewer_num',
+               'comment_num', 'comment_length',
+               # 'comment_embedding',
+               'last_comment_mention'],
+    'project': ['project_age', 'project_language_num', 'project_change_num', 'open_changes', 'project_author_num',
+                'project_reviewer_num', 'project_team_size',
+                'project_changes_per_author', 'project_changes_per_reviewer', 'project_changes_per_week',
+                'project_change_avg_lines', 'project_change_avg_segs', 'project_change_avg_files',
+                'project_add_per_week', 'project_del_per_week',
+                'project_merge_proportion', 'project_avg_reviewers', 'project_avg_comments', 'project_avg_rounds',
+                'project_avg_duration', 'project_avg_scores',
+                'project_avg_rounds_merged', 'project_avg_duration_merged',
+                'project_avg_churn_merged', 'project_avg_file_merged', 'project_avg_comments_merged',
+                'project_avg_rounds_abandoned', 'project_avg_duration_abandoned',
+                'project_avg_churn_abandoned', 'project_avg_file_abandoned', 'project_avg_comments_abandoned'],
+    'embedding': emb_features_cols
 }
 
 
@@ -80,19 +76,9 @@ def get_initial_feature_list() -> [str]:
 
 
 # 部分模型需要区分稀疏特征（分类型）
-# sparse_features_cols = ['is_documentation', 'is_bug_fixing', 'is_feature']
-sparse_features_cols = ['is_reviewer', 'is_documentation', 'is_bug_fixing', 'is_feature', 'is_improve', 'is_refactor',
-                        'last_comment_mention', 'has_test_file', 'is_responded']
+sparse_features_cols = ['author_is_reviewer', 'has_test', 'has_feature', 'has_bug', 'has_document', 'has_improve', 'has_refactor', 'last_comment_mention']
 
 # 部分模型需要区分稠密特征（数值型）
-# dense_features_cols = ['author_experience', 'author_merge_ratio', 'author_changes_per_week',
-#                        'author_merge_ratio_in_project', 'total_change_num', 'author_review_num',
-#                        'description_length', 'project_changes_per_week', 'project_merge_ratio',
-#                        'changes_per_author',
-#                        'num_of_reviewers', 'num_of_bot_reviewers', 'avg_reviewer_experience',
-#                        'avg_reviewer_review_count',
-#                        'lines_added', 'lines_deleted', 'files_added', 'files_deleted', 'files_modified',
-#                        'num_of_directory', 'modify_entropy', 'subsystem_num']
 dense_features_cols = list(filter(lambda x: x not in sparse_features_cols and x not in emb_features_cols, get_initial_feature_list()))
 
 # 每个稀疏特征的值的类别数，部分模型中需要指定，用于为每个稀疏特征构造embedding的参数

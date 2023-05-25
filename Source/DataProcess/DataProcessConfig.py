@@ -3,7 +3,7 @@ import torch
 
 # ########## Path Config ##########
 projects = ['Libreoffice', 'Eclipse', 'Gerrithub', 'OpenStack', 'Qt', 'Android', 'OpenDaylight']
-project = projects[6]
+project = projects[3]
 
 # data_folder = "/Users/aobang/Documents/学习资料/毕业设计/数据集/my_data/Data"
 data_folder = "E:/毕业设计/Data"

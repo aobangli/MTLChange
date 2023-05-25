@@ -15,8 +15,16 @@ import Source.ChangePrediction.loss_weighting_strategy.EW as EW_strategy
 import Source.ChangePrediction.loss_weighting_strategy.UW as UW_strategy
 import Source.ChangePrediction.loss_weighting_strategy.DWA as DWA_strategy
 
+sharebottom_config = {
+    'model_name': 'sharebottom',
+    'num_epoch': 15,
+    'batch_size': 256,
+    'lr': 1e-4,
+    'l2_regularization': 1e-4,
+}
 
-def get_task_types():
+
+def transfer_task_types():
     types = []
     for label_type in label_types:
         if label_type == TaskType.Binary_Classification:
@@ -30,15 +38,8 @@ def get_task_types():
     return types
 
 
-def multi_weighting_test():
-    df = load_data.prepare_dataframe()
-
-    all_features = [SparseFeat(feat, vocabulary_size=(train_df[feat].max() + 1).astype(np.int_), embedding_dim=4)
-                    for feat in sparse_features_cols]\
-                   + [DenseFeat(feat, 1, ) for feat in dense_features_cols]\
-                   + [DenseFeat(feat, 1, ) for feat in emb_features_cols]
-
-    task_types = get_task_types()
+def init_trainer(all_features):
+    task_types = transfer_task_types()
 
     model_args_dict = {
         'dnn_feature_columns': all_features,
@@ -65,25 +66,29 @@ def multi_weighting_test():
         device=train_device
     )
 
+    return weighting_trainer
+
+
+def run(train_df, test_df):
+    all_features = [SparseFeat(feat, vocabulary_size=(train_df[feat].max() + 1).astype(np.int_), embedding_dim=4)
+                    for feat in sparse_features_cols] \
+                   + [DenseFeat(feat, 1, ) for feat in dense_features_cols] \
+                   + [DenseFeat(feat, 1, ) for feat in emb_features_cols]
+
+    trainer = init_trainer(all_features)
+
     # 根据制定的特征顺序对数据集列重新排序，以适配模型输入
     feature_name = get_feature_names(all_features)
 
     train_dataset = load_data.MyDataset(train_df, reordered_feature_list=feature_name)
     test_dataset = load_data.MyDataset(test_df, reordered_feature_list=feature_name)
 
-    weighting_trainer.train(train_dataset)
-    weighting_trainer.test(test_dataset)
+    trainer.train(train_dataset)
+    trainer.test(test_dataset)
 
 
 if __name__ == "__main__":
-    sharebottom_config = {
-        'model_name': 'sharebottom',
-        'num_epoch': 15,
-        'batch_size': 256,
-        'lr': 1e-4,
-        'l2_regularization': 1e-4,
-    }
-
     train_df, test_df = load_data.load_splited_dataframe()
 
-    multi_weighting_test()
+    run(train_df, test_df)
+

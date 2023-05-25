@@ -51,7 +51,7 @@ comment_list_df['updated'] = pd.to_datetime(comment_list_df['updated'])
 comment_list_df['message'] = comment_list_df['message'].apply(str)
 
 lookback = 60
-social_network_lookback = 180
+social_network_lookback = 60
 
 # 默认值
 default_merge_ratio = 0.5
@@ -587,20 +587,20 @@ class FeatureCalculator:
             if merged_project_changes.shape[0] > 0 else 0
 
         features['project_avg_rounds_abandoned'] = np.mean(abandoned_project_changes['revision_num']) \
-            if merged_project_changes.shape[0] > 0 else default_rounds
+            if abandoned_project_changes.shape[0] > 0 else default_rounds
 
         features['project_avg_duration_abandoned'] = np.mean(abandoned_project_changes['duration']) \
-            if merged_project_changes.shape[0] > 0 else default_duration
+            if abandoned_project_changes.shape[0] > 0 else default_duration
 
         features['project_avg_churn_abandoned'] = \
             np.mean(merged_project_changes['added_lines']) + np.mean(abandoned_project_changes['deleted_lines']) \
-                if merged_project_changes.shape[0] > 0 else 0
+                if abandoned_project_changes.shape[0] > 0 else 0
 
         features['project_avg_file_abandoned'] = np.mean(abandoned_project_changes['file_num']) \
-            if merged_project_changes.shape[0] > 0 else 0
+            if abandoned_project_changes.shape[0] > 0 else 0
 
         features['project_avg_comments_abandoned'] = np.mean(abandoned_project_changes['comment_num']) \
-            if merged_project_changes.shape[0] > 0 else 0
+            if abandoned_project_changes.shape[0] > 0 else 0
 
         return features
 

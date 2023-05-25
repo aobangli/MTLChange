@@ -118,10 +118,6 @@ class MultiTrainerWeightingLoss:
                     if label_type == TaskType.Multiple_Classification:
                         # 多分类所用的CrossEntropyLoss()损失函数要求真实值为long类型
                         y_true = y_true.long()
-                        # op = OptimizedF1()
-                        # op.fit(output.cpu().detach(), y_true.cpu())
-                        # output = op.coefficients() * output
-                        # output = output.to(self.device)
                     else:
                         output = output.view(-1)
 
