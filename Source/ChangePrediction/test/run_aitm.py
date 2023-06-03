@@ -42,7 +42,6 @@ def multi_weighting_test():
     optim_args_dict = {
         'optim': 'adam',
         'lr': aitm_config['lr'],
-        # 'weight_decay': widedeep_config['l2_regularization']
     }
 
     weighting_trainer = MultiTrainerWeightingLoss(

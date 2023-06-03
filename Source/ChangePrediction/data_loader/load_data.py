@@ -195,12 +195,3 @@ def load_by_period_slide(train_size=8, test_size=2):
     return res
 
 
-def process_text(df):
-    sentences = df['subject']
-    # sentences = ["This is an example sentence", "Each sentence is converted"]
-
-    model = SentenceTransformer('sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2')
-    embeddings = model.encode(sentences)
-    print(embeddings.shape)
-    return embeddings
-

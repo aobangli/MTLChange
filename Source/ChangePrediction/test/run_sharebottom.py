@@ -70,9 +70,9 @@ def init_trainer(all_features):
 
 
 def run(train_df, test_df):
-    all_features = [SparseFeat(feat, vocabulary_size=(train_df[feat].max() + 1).astype(np.int_), embedding_dim=4)
-                    for feat in sparse_features_cols] \
-                   + [DenseFeat(feat, 1, ) for feat in dense_features_cols] \
+    all_features = [SparseFeat(feat, vocabulary_size=sparse_features_val_num[i], embedding_dim=4)
+                    for i, feat in enumerate(sparse_features_cols)]\
+                   + [DenseFeat(feat, 1, ) for feat in dense_features_cols]\
                    + [DenseFeat(feat, 1, ) for feat in emb_features_cols]
 
     trainer = init_trainer(all_features)

@@ -8,11 +8,11 @@ train_device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # 原始数据集路径
 original_path = '../data/Eclipse.csv'
-# data_path = '../data/Eclipse.csv'
+data_path = '../data/Eclipse.csv'
 # data_path = '../data/Libreoffice.csv'
 # data_path = '../data/OpenStack.csv'
 # data_path = '../data/Libreoffice_new.csv'
-data_path = '../data/Libreoffice_total_emb.csv'
+# data_path = '../data/Libreoffice_total_emb.csv'
 result_output_path = '../data/output'
 
 # 筛选指定时间的PR
@@ -23,9 +23,9 @@ end_date = "2022-01-01"
 subject_emb_features_cols = [f'subject_emb{i + 1}' for i in range(384)]
 comment_emb_features_cols = [f'comment_emb{i + 1}' for i in range(384)]
 msg_emb_features_cols = [f'msg_emb{i + 1}' for i in range(384)]
-emb_features_cols = subject_emb_features_cols + comment_emb_features_cols + msg_emb_features_cols
+# emb_features_cols = subject_emb_features_cols + comment_emb_features_cols + msg_emb_features_cols
 
-# emb_features_cols = []
+emb_features_cols = []
 
 features_group = {
     'author': ['author_experience', 'author_is_reviewer', 'author_change_num', 'author_participation',

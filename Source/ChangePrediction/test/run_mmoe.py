@@ -73,8 +73,8 @@ def init_trainer(all_features):
 
 
 def run(train_df, test_df):
-    all_features = [SparseFeat(feat, vocabulary_size=(train_df[feat].max() + 1).astype(np.int_), embedding_dim=4)
-                    for feat in sparse_features_cols]\
+    all_features = [SparseFeat(feat, vocabulary_size=sparse_features_val_num[i], embedding_dim=4)
+                    for i, feat in enumerate(sparse_features_cols)]\
                    + [DenseFeat(feat, 1, ) for feat in dense_features_cols]\
                    + [DenseFeat(feat, 1, ) for feat in emb_features_cols]
 
@@ -91,11 +91,11 @@ def run(train_df, test_df):
 
 
 if __name__ == "__main__":
-    train_df, test_df = load_data.load_splited_dataframe()
-    run(train_df, test_df)
+    # train_df, test_df = load_data.load_splited_dataframe()
+    # run(train_df, test_df)
 
-    # df_list = load_data.load_by_period()
-    # for round_index, (_train_df, _test_df) in tqdm(enumerate(df_list)):
-    #     print(f'=============== run {round_index} round! ===============')
-    #     print(f'train_size: {_train_df.shape[0]}    test_size: {_test_df.shape[0]}')
-    #     run(_train_df, _test_df)
+    df_list = load_data.load_by_period()
+    for round_index, (_train_df, _test_df) in tqdm(enumerate(df_list)):
+        print(f'=============== run {round_index} round! ===============')
+        print(f'train_size: {_train_df.shape[0]}    test_size: {_test_df.shape[0]}')
+        run(_train_df, _test_df)
